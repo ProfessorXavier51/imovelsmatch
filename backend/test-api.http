@@ -1,0 +1,86 @@
+### ============================================
+### 🧪 TESTES DA API - Cliente
+### ============================================
+### Use a extensão REST Client do VSCode
+### ou copie os comandos para Postman/Insomnia
+### ============================================
+
+@baseUrl = http://localhost:3001
+@contentType = application/json
+
+### ============================================
+### 1️⃣ CRIAR CLIENTE (POST)
+### ============================================
+POST {{baseUrl}}/clientes
+Content-Type: {{contentType}}
+
+{
+  "nome": "João Silva",
+  "email": "joao.silva@gmail.com",
+  "telefone": "11999999999",
+  "tipoInteresse": "COMPRAR",
+  "valorMinimo": 200000,
+  "valorMaximo": 500000,
+  "cidade": "São Paulo",
+  "estado": "SP",
+  "bairrosPreferidos": ["Centro", "Jardins", "Vila Madalena"],
+  "tiposImovel": ["CASA", "APARTAMENTO"],
+  "observacoes": "Prefiro imóveis com vaga de garagem"
+}
+
+### ============================================
+### 2️⃣ LISTAR TODOS OS CLIENTES (GET)
+### ============================================
+GET {{baseUrl}}/clientes
+Content-Type: {{contentType}}
+
+### ============================================
+### 3️⃣ LISTAR COM FILTROS E PAGINAÇÃO (GET)
+### ============================================
+GET {{baseUrl}}/clientes?cidade=São Paulo&ativo=true&page=1&pageSize=10
+Content-Type: {{contentType}}
+
+### ============================================
+### 4️⃣ BUSCAR CLIENTE POR ID (GET)
+### ============================================
+### ⚠️ SUBSTITUA {id} pelo ID real retornado no POST
+GET {{baseUrl}}/clientes/{id}
+Content-Type: {{contentType}}
+
+### ============================================
+### 5️⃣ ATUALIZAR CLIENTE (PATCH)
+### ============================================
+### ⚠️ SUBSTITUA {id} pelo ID real
+PATCH {{baseUrl}}/clientes/{id}
+Content-Type: {{contentType}}
+
+{
+  "telefone": "11988888888",
+  "valorMinimo": 300000,
+  "valorMaximo": 600000
+}
+
+### ============================================
+### 6️⃣ DELETAR CLIENTE (DELETE)
+### ============================================
+### ⚠️ SUBSTITUA {id} pelo ID real
+DELETE {{baseUrl}}/clientes/{id}
+
+### ============================================
+### 📚 EXEMPLOS DE FILTROS AVANÇADOS
+### ============================================
+
+### Buscar por nome
+GET {{baseUrl}}/clientes?search=João
+
+### Filtrar por tipo de interesse
+GET {{baseUrl}}/clientes?tipoInteresse=COMPRAR
+
+### Filtrar por faixa de valor
+GET {{baseUrl}}/clientes?valorMinimo=200000&valorMaximo=500000
+
+### Ordenar por nome
+GET {{baseUrl}}/clientes?sortField=nome&sortOrder=asc
+
+### Combinar filtros
+GET {{baseUrl}}/clientes?cidade=São Paulo&tipoInteresse=COMPRAR&ativo=true&page=1&pageSize=20&sortField=createdAt&sortOrder=desc

@@ -1,0 +1,781 @@
+// ============================================
+// PRISMA SCHEMA - IMOVELSMATCH
+// ============================================
+// 
+// Responsabilidade:
+// - Definir estrutura do banco de dados
+// - Mapear tabelas e relacionamentos
+// - Gerar tipos TypeScript para o Prisma Client
+// 
+// Por quê Prisma?
+// - Type-safe: Tipos automáticos para TypeScript
+// - Migrations: Controle de versão do banco
+// - Query builder: Consultas intuitivas
+// 
+// Quando usar?
+// - Sempre que precisar alterar estrutura do banco
+// - Rodar: npx prisma migrate dev
+// ============================================
+
+// Configuração do gerador Prisma Client
+// O que faz? Gera código TypeScript para acessar o banco
+// Onde fica? node_modules/@prisma/client
+generator client {
+  provider = "prisma-client-js"  // Gerador para JavaScript/TypeScript
+}
+
+// Configuração da fonte de dados (banco de dados)
+// O que faz? Define qual banco usar e como conectar
+// Como conectar? Usa variável de ambiente DATABASE_URL
+datasource db {
+  provider = "mysql"              // Banco MySQL 8+
+  url      = env("DATABASE_URL")  // URL de conexão do .env
+}
+
+// ============================================
+// ENUMS (Tipos Enumerados)
+// ============================================
+// 
+// Por quê usar enums?
+// - Garante valores válidos no banco
+// - Type-safe no TypeScript
+// - Facilita manutenção
+// ============================================
+
+// Enum: Tipo de interesse do cliente
+// Valores possíveis: COMPRAR ou ALUGAR
+// Onde usar? Campo tipoInteresse na tabela Cliente
+enum TipoInteresse {
+  COMPRAR  // Cliente quer comprar imóvel
+  ALUGAR   // Cliente quer alugar imóvel
+}
+
+// Enum: Tipo de operação do imóvel
+// Valores possíveis: VENDA ou ALUGUEL
+// Onde usar? Campo operacao na tabela Imovel
+enum TipoOperacao {
+  VENDA    // Imóvel para venda
+  ALUGUEL  // Imóvel para aluguel
+}
+
+// Enum: Tipo de imóvel
+// Valores possíveis: CASA, APARTAMENTO, TERRENO, SOBRADO, OUTRO
+// Onde usar? Campo tipoImovel na tabela Imovel
+enum TipoImovel {
+  CASA         // Casa térrea ou assobradada
+  APARTAMENTO  // Apartamento em prédio
+  TERRENO      // Terreno vazio
+  SOBRADO      // Casa de múltiplos andares
+  OUTRO        // Outros tipos (galpão, sala comercial, etc.)
+}
+
+// Enum: Etapa da negociação (funil de vendas)
+// Valores possíveis: etapas do processo de venda
+// Onde usar? Campo etapa na tabela Negociacao
+enum EtapaNegociacao {
+  PRIMEIRO_CONTATO  // Primeiro contato com cliente
+  VISITA_AGENDADA   // Visita ao imóvel agendada
+  PROPOSTA          // Proposta enviada/recebida
+  ANALISE           // Em análise (documentação, crédito)
+  FECHADO           // Negócio fechado (ganho)
+  PERDIDO           // Negócio perdido
+}
+
+// Enum: Tipo de atividade no CRM
+// Valores possíveis: tipos de interação com cliente
+// Onde usar? Campo tipo na tabela Atividade
+enum TipoAtividade {
+  LIGACAO   // Ligação telefônica
+  EMAIL     // E-mail enviado
+  WHATSAPP  // Mensagem WhatsApp
+  VISITA    // Visita presencial
+  REUNIAO   // Reunião agendada
+  OUTRO     // Outro tipo de atividade
+}
+
+// Enum: Status do envio de notificação
+// Valores possíveis: PENDENTE, ENVIADO, FALHOU
+// Onde usar? Campo status na tabela MatchLog
+enum StatusMatch {
+  PENDENTE  // Notificação ainda não enviada
+  ENVIADO   // Notificação enviada com sucesso
+  FALHOU    // Falha no envio da notificação
+}
+
+// ============================================
+// MODEL: User (Usuário Admin)
+// ============================================
+// 
+// Responsabilidade:
+// - Representar usuários administradores do sistema
+// - Controlar acesso ao painel admin
+// 
+// Relacionamentos:
+// - 1 User pode ter N Negociacoes (responsável)
+// - 1 User pode ter N Atividades (responsável)
+// ============================================
+
+model User {
+  // Identificador único (UUID)
+  // Por quê UUID? Mais seguro que ID incremental
+  // Como gerar? @default(uuid()) gera automaticamente
+  id        String   @id @default(uuid())
+  
+  // Nome completo do usuário admin
+  // Obrigatório (não tem ?)
+  nome      String
+  
+  // E-mail único para login
+  // @unique: Garante que não há e-mails duplicados
+  // Por quê único? Usado como username no login
+  email     String   @unique
+  
+  // Senha criptografada (hash bcrypt)
+  // NUNCA armazenar senha em texto puro
+  // Como criptografar? Usar bcrypt no service
+  senha     String
+  
+  // Papel do usuário no sistema (ADMIN ou USER)
+  // @default("USER"): Por padrão, usuário comum
+  // ADMIN: Acesso total ao sistema
+  // USER: Acesso limitado
+  role      String   @default("USER")
+  
+  // Se o usuário está ativo no sistema
+  // @default(true): Por padrão, usuário começa ativo
+  // Quando desativar? Ao invés de deletar
+  ativo     Boolean  @default(true)
+  
+  // Data de criação do registro
+  // @default(now()): Preenche automaticamente com data atual
+  // Quando? No momento da inserção no banco
+  createdAt DateTime @default(now())
+  
+  // Data da última atualização
+  // @updatedAt: Atualiza automaticamente quando registro muda
+  // Quando? Sempre que houver UPDATE
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Negociações que este usuário é responsável
+  // Tipo: 1 para N (um usuário, várias negociações)
+  // Como funciona? Campo responsavelId em Negociacao aponta para este User
+  negociacoes Negociacao[]
+  
+  // Atividades que este usuário é responsável
+  // Tipo: 1 para N (um usuário, várias atividades)
+  atividades  Atividade[]
+
+  // Nome da tabela no banco de dados
+  // Por quê? Convenção: plural minúsculo
+  @@map("users")
+}
+
+// ============================================
+// MODEL: Cliente
+// ============================================
+// 
+// Responsabilidade:
+// - Representar clientes interessados em imóveis
+// - Armazenar preferências de busca
+// - Gerenciar dados de contato
+// 
+// Relacionamentos:
+// - 1 Cliente pode ter N MatchLogs
+// - 1 Cliente pode ter N Negociacoes
+// - 1 Cliente pode ter N Anotacoes
+// - N Clientes podem ter N Etiquetas (many-to-many)
+// ============================================
+
+model Cliente {
+  // Identificador único
+  id        String   @id @default(uuid())
+  
+  // Nome completo do cliente
+  nome      String
+  
+  // E-mail do cliente (único)
+  // Por quê único? Para evitar cadastros duplicados
+  email     String   @unique
+  
+  // Telefone com DDD (formato: 11999999999)
+  telefone  String
+  
+  // Tipo de interesse (COMPRAR ou ALUGAR)
+  // Tipo: Enum TipoInteresse
+  // Por quê enum? Garante apenas valores válidos
+  tipoInteresse TipoInteresse
+  
+  // Valor mínimo que o cliente pode pagar
+  // Tipo: Decimal(10,2) - 10 dígitos, 2 decimais
+  // Exemplo: 150000.00
+  valorMinimo   Decimal  @db.Decimal(10, 2)
+  
+  // Valor máximo que o cliente pode pagar
+  valorMaximo   Decimal  @db.Decimal(10, 2)
+  
+  // Cidade de interesse
+  cidade        String
+  
+  // Estado (UF) de interesse
+  // Opcional (pode ser null)
+  // Exemplo: "SP", "RJ"
+  estado        String?
+  
+  // Bairros preferidos (array JSON)
+  // Por quê JSON? Lista dinâmica de bairros
+  // Exemplo: ["Centro", "Jardins", "Vila Madalena"]
+  // Tipo: Json armazena array como JSON no MySQL
+  bairrosPreferidos Json
+  
+  // Tipos de imóveis desejados (array JSON)
+  // Exemplo: ["CASA", "APARTAMENTO"]
+  // Tipo: Json armazena array como JSON no MySQL
+  tiposImovel       Json
+  
+  // Observações adicionais sobre o cliente
+  // Opcional (pode ser null)
+  // Tipo: Text - permite textos longos
+  observacoes   String?  @db.Text
+  
+  // Se o cliente está ativo (recebe notificações)
+  // @default(true): Cliente começa ativo
+  ativo         Boolean  @default(true)
+  
+  // Origem do lead (de onde veio o cliente)
+  // Opcional
+  // Exemplos: "Site", "Facebook", "Indicação"
+  origem        String?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Logs de matching (notificações enviadas)
+  matchLogs   MatchLog[]
+  
+  // Negociações deste cliente
+  negociacoes Negociacao[]
+  
+  // Anotações sobre este cliente
+  anotacoes   Anotacao[]
+  
+  // Etiquetas (tags) deste cliente
+  // Tipo: Many-to-Many através de ClienteEtiqueta
+  etiquetas   ClienteEtiqueta[]
+
+  @@map("clientes")
+}
+
+// ============================================
+// MODEL: Imovel
+// ============================================
+// 
+// Responsabilidade:
+// - Representar imóveis cadastrados
+// - Armazenar características e localização
+// - Controlar publicação
+// 
+// Relacionamentos:
+// - 1 Imovel pode ter N MatchLogs
+// - 1 Imovel pode ter N Negociacoes
+// - 1 Imovel pode ter N Fotos (JSON array)
+// ============================================
+
+model Imovel {
+  // Identificador único
+  id        String   @id @default(uuid())
+  
+  // Título do anúncio
+  // Exemplo: "Apartamento 3 quartos no Centro"
+  titulo    String
+  
+  // Slug para URL amigável
+  // @unique: Cada slug deve ser único
+  // Exemplo: "apartamento-3-quartos-centro"
+  // Como gerar? Usar biblioteca slugify
+  slug      String   @unique
+  
+  // Tipo de imóvel (enum)
+  tipoImovel TipoImovel
+  
+  // Tipo de operação (VENDA ou ALUGUEL)
+  operacao   TipoOperacao
+  
+  // Valor do imóvel
+  // Tipo: Decimal para precisão monetária
+  valor      Decimal  @db.Decimal(10, 2)
+  
+  // Endereço completo
+  endereco   String
+  
+  // Bairro
+  bairro     String
+  
+  // Cidade
+  cidade     String
+  
+  // Estado (UF)
+  estado     String
+  
+  // CEP (formato: 12345678)
+  cep        String?
+  
+  // Número de quartos
+  // @default(0): Se não informado, assume 0
+  quartos    Int      @default(0)
+  
+  // Número de vagas de garagem
+  vagas      Int      @default(0)
+  
+  // Área em metros quadrados
+  // Tipo: Decimal para permitir casas decimais
+  // Exemplo: 85.50
+  areaM2     Decimal? @db.Decimal(8, 2)
+  
+  // Descrição detalhada do imóvel
+  // Tipo: Text - permite textos longos
+  descricao  String?  @db.Text
+  
+  // URLs das fotos (array JSON)
+  // Por quê JSON? Lista dinâmica de URLs
+  // Exemplo: ["https://cloudinary.com/foto1.jpg", "..."]
+  // Tipo: Json armazena array de URLs do Cloudinary
+  fotos      Json
+  
+  // Se o imóvel está publicado (visível)
+  // @default(false): Por padrão, não publicado
+  // Por quê? Permite revisar antes de publicar
+  publicado  Boolean  @default(false)
+  
+  // Se o imóvel é destaque na home
+  // @default(false): Por padrão, não é destaque
+  destaque   Boolean  @default(false)
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Logs de matching (notificações enviadas)
+  matchLogs   MatchLog[]
+  
+  // Negociações deste imóvel
+  negociacoes Negociacao[]
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  // Por quê índices? Melhoram performance de buscas
+  // Quando usar? Em campos frequentemente filtrados
+  
+  // Índice composto para busca por cidade e operação
+  // Usado em: Listagem de imóveis com filtros
+  @@index([cidade, operacao])
+  
+  // Índice para busca por publicado
+  // Usado em: Listar apenas imóveis publicados
+  @@index([publicado])
+
+  @@map("imoveis")
+}
+
+// ============================================
+// MODEL: MatchLog
+// ============================================
+// 
+// Responsabilidade:
+// - Registrar notificações de matching enviadas
+// - Controlar limite diário de notificações
+// - Rastrear sucessos e falhas
+// 
+// Relacionamentos:
+// - N MatchLogs pertencem a 1 Cliente
+// - N MatchLogs pertencem a 1 Imovel
+// ============================================
+
+model MatchLog {
+  // Identificador único
+  id        String   @id @default(uuid())
+  
+  // ID do cliente que recebeu notificação
+  // Tipo: Foreign Key para Cliente
+  clienteId String
+  
+  // ID do imóvel que foi notificado
+  // Tipo: Foreign Key para Imovel
+  imovelId  String
+  
+  // Canal de envio (email ou whatsapp)
+  // Exemplo: "email", "whatsapp"
+  canal     String
+  
+  // Status do envio (enum)
+  // PENDENTE, ENVIADO ou FALHOU
+  status    StatusMatch @default(PENDENTE)
+  
+  // Mensagem de erro (se falhou)
+  // Opcional - só preenche se status = FALHOU
+  // Tipo: Text - permite mensagens longas
+  erro      String?     @db.Text
+  
+  // Timestamp do envio
+  createdAt DateTime    @default(now())
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Cliente que recebeu a notificação
+  // @relation: Define relacionamento
+  // fields: Campo neste model que aponta para outro
+  // references: Campo no outro model (chave primária)
+  // onDelete: Cascade - se cliente deletado, deleta logs
+  cliente Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  // Imóvel que foi notificado
+  imovel  Imovel  @relation(fields: [imovelId], references: [id], onDelete: Cascade)
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  
+  // Índice para buscar logs por cliente
+  @@index([clienteId])
+  
+  // Índice para buscar logs por imóvel
+  @@index([imovelId])
+  
+  // Índice composto para controle de limite diário
+  // Usado em: Verificar quantas notificações cliente recebeu hoje
+  @@index([clienteId, createdAt])
+
+  @@map("match_logs")
+}
+
+// ============================================
+// MODEL: Negociacao
+// ============================================
+// 
+// Responsabilidade:
+// - Representar negociações em andamento
+// - Controlar funil de vendas
+// - Rastrear responsável e valores
+// 
+// Relacionamentos:
+// - N Negociacoes pertencem a 1 Cliente
+// - N Negociacoes pertencem a 1 Imovel
+// - N Negociacoes pertencem a 1 User (responsável)
+// - 1 Negociacao pode ter N Atividades
+// - 1 Negociacao pode ter N Anotacoes
+// ============================================
+
+model Negociacao {
+  // Identificador único
+  id        String   @id @default(uuid())
+  
+  // ID do cliente
+  clienteId String
+  
+  // ID do imóvel
+  imovelId  String
+  
+  // ID do usuário responsável
+  // Opcional - pode não ter responsável ainda
+  responsavelId String?
+  
+  // Etapa atual da negociação (enum)
+  // Exemplo: PRIMEIRO_CONTATO, VISITA_AGENDADA, etc.
+  etapa     EtapaNegociacao @default(PRIMEIRO_CONTATO)
+  
+  // Valor proposto pelo cliente
+  // Opcional - pode não ter proposta ainda
+  // Tipo: Decimal para precisão monetária
+  valorProposta Decimal? @db.Decimal(10, 2)
+  
+  // Observações sobre a negociação
+  // Opcional
+  // Tipo: Text - permite textos longos
+  observacoes   String?  @db.Text
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Cliente desta negociação
+  cliente     Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  // Imóvel desta negociação
+  imovel      Imovel   @relation(fields: [imovelId], references: [id], onDelete: Cascade)
+  
+  // Usuário responsável
+  // Opcional - pode ser null
+  responsavel User?    @relation(fields: [responsavelId], references: [id], onDelete: SetNull)
+  
+  // Atividades desta negociação
+  atividades  Atividade[]
+  
+  // Anotações desta negociação
+  anotacoes   Anotacao[]
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  
+  // Índice para buscar negociações por cliente
+  @@index([clienteId])
+  
+  // Índice para buscar negociações por imóvel
+  @@index([imovelId])
+  
+  // Índice para buscar negociações por responsável
+  @@index([responsavelId])
+  
+  // Índice para buscar por etapa (funil de vendas)
+  @@index([etapa])
+
+  @@map("negociacoes")
+}
+
+// ============================================
+// MODEL: Atividade
+// ============================================
+// 
+// Responsabilidade:
+// - Representar atividades do CRM
+// - Controlar tarefas e follow-ups
+// - Rastrear conclusão
+// 
+// Relacionamentos:
+// - N Atividades pertencem a 1 Negociacao
+// - N Atividades pertencem a 1 User (responsável)
+// ============================================
+
+model Atividade {
+  // Identificador único
+  id        String   @id @default(uuid())
+  
+  // ID da negociação relacionada
+  negociacaoId String
+  
+  // ID do usuário responsável
+  // Opcional - pode não ter responsável
+  responsavelId String?
+  
+  // Tipo da atividade (enum)
+  // Exemplo: LIGACAO, EMAIL, WHATSAPP, etc.
+  tipo      TipoAtividade
+  
+  // Descrição da atividade
+  // Tipo: Text - permite textos longos
+  // Exemplo: "Ligar para agendar visita"
+  descricao String   @db.Text
+  
+  // Data/hora agendada para a atividade
+  // Opcional - pode ser atividade sem data específica
+  dataAgendada DateTime?
+  
+  // Se a atividade foi concluída
+  // @default(false): Por padrão, não concluída
+  concluida    Boolean   @default(false)
+  
+  // Data/hora da conclusão
+  // Opcional - só preenche quando concluída
+  dataConclusao DateTime?
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Negociação desta atividade
+  negociacao  Negociacao @relation(fields: [negociacaoId], references: [id], onDelete: Cascade)
+  
+  // Usuário responsável
+  responsavel User?      @relation(fields: [responsavelId], references: [id], onDelete: SetNull)
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  
+  // Índice para buscar atividades por negociação
+  @@index([negociacaoId])
+  
+  // Índice para buscar atividades por responsável
+  @@index([responsavelId])
+  
+  // Índice para buscar atividades não concluídas
+  @@index([concluida])
+  
+  // Índice para buscar atividades por data
+  @@index([dataAgendada])
+
+  @@map("atividades")
+}
+
+// ============================================
+// MODEL: Anotacao
+// ============================================
+// 
+// Responsabilidade:
+// - Armazenar anotações sobre clientes/negociações
+// - Histórico de interações
+// 
+// Relacionamentos:
+// - N Anotacoes podem pertencer a 1 Cliente (opcional)
+// - N Anotacoes podem pertencer a 1 Negociacao (opcional)
+// ============================================
+
+model Anotacao {
+  // Identificador único
+  id        String   @id @default(uuid())
+  
+  // ID do cliente (opcional)
+  // Pode ser anotação de cliente OU negociação
+  clienteId String?
+  
+  // ID da negociação (opcional)
+  negociacaoId String?
+  
+  // Conteúdo da anotação
+  // Tipo: Text - permite textos longos
+  conteudo  String   @db.Text
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Cliente (opcional)
+  cliente    Cliente?    @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  // Negociação (opcional)
+  negociacao Negociacao? @relation(fields: [negociacaoId], references: [id], onDelete: Cascade)
+
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  
+  // Índice para buscar anotações por cliente
+  @@index([clienteId])
+  
+  // Índice para buscar anotações por negociação
+  @@index([negociacaoId])
+
+  @@map("anotacoes")
+}
+
+// ============================================
+// MODEL: Etiqueta (Tag)
+// ============================================
+// 
+// Responsabilidade:
+// - Representar etiquetas (tags) para clientes
+// - Categorização e segmentação
+// 
+// Relacionamentos:
+// - N Etiquetas podem ter N Clientes (many-to-many)
+// ============================================
+
+model Etiqueta {
+  // Identificador único
+  id    String @id @default(uuid())
+  
+  // Nome da etiqueta
+  // @unique: Não pode ter etiquetas duplicadas
+  // Exemplo: "VIP", "Urgente", "Investidor"
+  nome  String @unique
+  
+  // Cor da etiqueta (hexadecimal)
+  // Exemplo: "#FF5733"
+  // Usado para exibição visual no frontend
+  cor   String
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Clientes com esta etiqueta
+  // Tipo: Many-to-Many através de ClienteEtiqueta
+  clientes ClienteEtiqueta[]
+
+  @@map("etiquetas")
+}
+
+// ============================================
+// MODEL: ClienteEtiqueta (Tabela Pivot)
+// ============================================
+// 
+// Responsabilidade:
+// - Relacionamento Many-to-Many entre Cliente e Etiqueta
+// - Permite que 1 cliente tenha várias etiquetas
+// - Permite que 1 etiqueta seja usada em vários clientes
+// 
+// Por quê tabela separada?
+// - Relacionamento N para N precisa de tabela intermediária
+// - Permite adicionar campos extras no futuro (ex: data)
+// ============================================
+
+model ClienteEtiqueta {
+  // ID do cliente
+  clienteId  String
+  
+  // ID da etiqueta
+  etiquetaId String
+  
+  // Data de atribuição da etiqueta
+  createdAt  DateTime @default(now())
+
+  // ============================================
+  // RELACIONAMENTOS
+  // ============================================
+  
+  // Cliente
+  cliente  Cliente  @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+  
+  // Etiqueta
+  etiqueta Etiqueta @relation(fields: [etiquetaId], references: [id], onDelete: Cascade)
+
+  // ============================================
+  // CHAVE PRIMÁRIA COMPOSTA
+  // ============================================
+  // Por quê? Garante que não há duplicatas
+  // Exemplo: Mesmo cliente não pode ter mesma etiqueta 2x
+  @@id([clienteId, etiquetaId])
+  
+  // ============================================
+  // ÍNDICES
+  // ============================================
+  
+  // Índice para buscar etiquetas de um cliente
+  @@index([clienteId])
+  
+  // Índice para buscar clientes de uma etiqueta
+  @@index([etiquetaId])
+
+  @@map("cliente_etiquetas")
+}
