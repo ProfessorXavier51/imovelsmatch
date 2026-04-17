@@ -19,6 +19,7 @@ import { Module } from '@nestjs/common';
 import { DatabaseModule } from '../../infrastructure/database/database.module';
 import { ImovelController } from '../controllers/imovel.controller';
 import { CreateImovelUseCase } from '../../application/use-cases/imovel/create-imovel.use-case';
+import { ListImoveisUseCase } from '../../application/use-cases/imovel/list-imoveis.use-case';
 
 /**
  * 🏗️ MODULE: ImovelModule
@@ -47,8 +48,8 @@ import { CreateImovelUseCase } from '../../application/use-cases/imovel/create-i
   controllers: [ImovelController],
   providers: [
     CreateImovelUseCase,
+    ListImoveisUseCase,
     // TODO: Adicionar outros use cases:
-    // - ListImoveisUseCase
     // - FindImovelUseCase
     // - UpdateImovelUseCase
     // - DeleteImovelUseCase

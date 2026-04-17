@@ -52,7 +52,7 @@ import { FindMatchesForImovelUseCase } from '../../application/use-cases/match/f
 @UseGuards(JwtAuthGuard) // 👮 O QUE: Aplica proteção JWT em TODAS as rotas deste controller
 @Controller('matches') // 🌐 O QUE: Define prefixo de rota "/matches"
 export class MatchController {
-  
+
   /**
    * 🏗️ CONSTRUTOR
    * 
@@ -63,7 +63,7 @@ export class MatchController {
    */
   constructor(
     private findMatchesUseCase: FindMatchesForImovelUseCase // 💘 Caso de uso de matching injetado
-  ) {}
+  ) { }
 
   /**
    * 💘 MÉTODO: findMatchesForImovel
@@ -109,7 +109,7 @@ export class MatchController {
     // 📚 COMO: const imovel = await this.imovelRepository.findById(id);
     // 🤔 POR QUÊ: Precisa dos dados do imóvel pra fazer matching
     // ⏰ QUANDO: Antes de chamar o use case
-    
+
     // ========================================
     // ⚠️ TODO: CHAMAR USE CASE DE MATCHING
     // ========================================
@@ -117,7 +117,7 @@ export class MatchController {
     // 📚 COMO: return this.findMatchesUseCase.execute(imovel);
     // 🤔 POR QUÊ: Use case contém a lógica de matching
     // ⏰ QUANDO: Após buscar o imóvel
-    
+
     // ========================================
     // 📤 RESPOSTA TEMPORÁRIA (MOCK)
     // ========================================
@@ -125,7 +125,7 @@ export class MatchController {
     // 📚 COMO: Objeto com mensagem
     // 🤔 POR QUÊ: Pra não quebrar a API enquanto não implementa
     // ⏰ QUANDO: Enquanto não tiver ImovelRepository injetado
-    return { 
+    return {
       message: 'Buscar matches para imóvel - implementar busca do imóvel primeiro',
       // 📝 NOTA: Quando implementar, vai retornar:
       // matches: Cliente[] (array de clientes compatíveis)

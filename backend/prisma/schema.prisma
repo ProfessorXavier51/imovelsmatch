@@ -73,12 +73,24 @@ enum TipoImovel {
 // Valores possíveis: etapas do processo de venda
 // Onde usar? Campo etapa na tabela Negociacao
 enum EtapaNegociacao {
-  PRIMEIRO_CONTATO  // Primeiro contato com cliente
-  VISITA_AGENDADA   // Visita ao imóvel agendada
-  PROPOSTA          // Proposta enviada/recebida
-  ANALISE           // Em análise (documentação, crédito)
-  FECHADO           // Negócio fechado (ganho)
-  PERDIDO           // Negócio perdido
+  CONTATO_INICIAL      // Primeiro contato com cliente
+  VISITA_AGENDADA      // Visita ao imóvel agendada
+  VISITA_REALIZADA     // Visita realizada
+  ANALISE              // Em análise (documentação, crédito)
+  PROPOSTA             // Proposta enviada/recebida
+  CONTRATO             // Em fase de contrato
+  FECHADO              // Negócio fechado (ganho)
+  PERDIDO              // Negócio perdido
+}
+
+// Enum: Status da negociação
+// Valores possíveis: situação atual da negociação
+enum StatusNegociacao {
+  ATIVA     // Negociação em andamento
+  PAUSADA   // Negociação pausada temporariamente
+  FECHADA   // Negócio fechado com sucesso
+  PERDIDA   // Negócio perdido
+  CANCELADA // Negociação cancelada
 }
 
 // Enum: Tipo de atividade no CRM
@@ -495,8 +507,8 @@ model Negociacao {
   responsavelId String?
   
   // Etapa atual da negociação (enum)
-  // Exemplo: PRIMEIRO_CONTATO, VISITA_AGENDADA, etc.
-  etapa     EtapaNegociacao @default(PRIMEIRO_CONTATO)
+  // Exemplo: CONTATO_INICIAL, VISITA_AGENDADA, etc.
+  etapa     EtapaNegociacao @default(CONTATO_INICIAL)
   
   // Valor proposto pelo cliente
   // Opcional - pode não ter proposta ainda
@@ -507,6 +519,22 @@ model Negociacao {
   // Opcional
   // Tipo: Text - permite textos longos
   observacoes   String?  @db.Text
+
+  // Percentual de match entre cliente e imóvel
+  // Exemplo: 85 (representa 85% de compatibilidade)
+  percentualMatch Int      @default(0)
+
+  // Status da negociação
+  // Exemplo: ATIVA, PAUSADA, FECHADA, PERDIDA
+  status          StatusNegociacao @default(ATIVA)
+
+  // Data de fechamento (quando status = FECHADA)
+  // Opcional - apenas preenchido quando fechado
+  dataFechamento  DateTime?
+
+  // Motivo da perda (quando status = PERDIDA)
+  // Opcional - apenas preenchido quando perdido
+  motivoPerda     String?
   
   // Timestamps
   createdAt DateTime @default(now())
@@ -596,6 +624,10 @@ model Atividade {
   // Data/hora da conclusão
   // Opcional - só preenche quando concluída
   dataConclusao DateTime?
+
+  // Status da atividade
+  // Exemplo: PENDENTE, CONCLUIDO, CANCELADO, ATRASADO
+  status        String    @default("PENDENTE")
   
   // Timestamps
   createdAt DateTime @default(now())

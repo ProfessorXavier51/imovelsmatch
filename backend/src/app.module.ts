@@ -28,6 +28,8 @@ import { AuthModule } from './presentation/modules/auth.module';
 import { ImovelModule } from './presentation/modules/imovel.module';
 import { UploadModule } from './presentation/modules/upload.module';
 import { MatchModule } from './presentation/modules/match.module';
+import { DashboardModule } from './dashboard.module';
+import { NegociacaoModule } from './presentation/modules/negociacao.module';
 import { NotificationsGateway } from './infrastructure/websocket/notifications.gateway';
 import { cacheConfig } from './infrastructure/cache/cache.config';
 import { throttlerConfig } from './infrastructure/throttler/throttler.config';
@@ -109,6 +111,20 @@ import { winstonConfig } from './infrastructure/logger/winston.config';
     // 🎯 O que faz? Encontra clientes para imóveis
     // 📚 Analogia: Departamento de Matchmaking
     MatchModule,
+
+    // ========================================
+    // DashboardModule - Estatísticas e Relatórios
+    // ========================================
+    // 📊 O que faz? Dashboard e relatórios
+    // 📚 Analogia: Departamento de BI/Analytics
+    DashboardModule,
+
+    // ========================================
+    // NegociacaoModule - CRM e Pipeline
+    // ========================================
+    // 🎯 O que faz? Gerencia negociações e atividades
+    // 📚 Analogia: Departamento Comercial
+    NegociacaoModule,
 
     // ========================================
     // CacheModule - Cache em Memória

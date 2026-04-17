@@ -22,7 +22,9 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagg
 import { JwtAuthGuard } from '../../infrastructure/auth/jwt-auth.guard';
 import { CreateImovelDTO } from '../../application/dtos/imovel/create-imovel.dto';
 import { UpdateImovelDTO } from '../../application/dtos/imovel/update-imovel.dto';
+import { ImovelResponseDTO } from '../../application/dtos/imovel/imovel-response.dto';
 import { CreateImovelUseCase } from '../../application/use-cases/imovel/create-imovel.use-case';
+import { ListImoveisUseCase } from '../../application/use-cases/imovel/list-imoveis.use-case';
 
 /**
  * 🏗️ CONTROLLER: ImovelController
@@ -40,7 +42,10 @@ import { CreateImovelUseCase } from '../../application/use-cases/imovel/create-i
 @UseGuards(JwtAuthGuard)
 @Controller('imoveis')
 export class ImovelController {
-  constructor(private createImovelUseCase: CreateImovelUseCase) {}
+  constructor(
+    private createImovelUseCase: CreateImovelUseCase,
+    private listImoveisUseCase: ListImoveisUseCase,
+  ) {}
 
   /**
    * 🏗️ ROTA: POST /imoveis
@@ -74,8 +79,30 @@ export class ImovelController {
   @Get()
   @ApiOperation({ summary: 'Listar imóveis' })
   async findAll(@Query() query: any) {
-    // TODO: Implementar ListImoveisUseCase
-    return { message: 'Lista de imóveis - implementar outros use cases' };
+    const filters = {
+      cidade: query.cidade,
+      estado: query.estado,
+      bairro: query.bairro,
+      operacao: query.operacao,
+      tipoImovel: query.tipoImovel,
+      valorMinimo: query.valorMinimo ? Number(query.valorMinimo) : undefined,
+      valorMaximo: query.valorMaximo ? Number(query.valorMaximo) : undefined,
+      quartosMinimo: query.quartosMinimo ? Number(query.quartosMinimo) : undefined,
+      vagasMinimo: query.vagasMinimo ? Number(query.vagasMinimo) : undefined,
+      publicado: query.publicado !== undefined ? query.publicado === 'true' : undefined,
+      search: query.search,
+    };
+
+    const page = query.page ? Number(query.page) : 1;
+    const pageSize = query.pageSize ? Number(query.pageSize) : 10;
+
+    const result = await this.listImoveisUseCase.execute(filters, page, pageSize);
+
+    // Converter Entities → DTOs
+    return {
+      ...result,
+      data: ImovelResponseDTO.fromEntityArray(result.data),
+    };
   }
 
   /**

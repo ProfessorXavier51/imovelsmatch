@@ -1,4 +1,11 @@
 {
+  "name": "imovelsmatch",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
+    "dev": "cd frontend && npm run dev",
+    "start": "cd frontend && node .next/standalone/server.js"
+  },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@nestjs/bull": "^11.0.4",

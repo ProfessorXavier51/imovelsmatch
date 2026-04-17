@@ -1,0 +1,231 @@
+/* ============================================
+   🎨 ESTILOS GLOBAIS - globals.css
+   ============================================
+
+   🎯 O QUE ESTE ARQUIVO FAZ?
+   Define estilos globais e importa Tailwind CSS.
+
+   📚 ANALOGIA: REGRAS GERAIS DO JOGO 📋
+   - Reset de estilos padrão
+   - Variáveis CSS customizadas
+   - Estilos base do Tailwind
+
+   🤔 POR QUÊ PRECISAMOS DISSO?
+   - Tailwind precisa ser importado
+   - Definir variáveis CSS globais
+   - Reset de estilos do browser
+
+   ⏰ QUANDO É USADO?
+   - Em todas as páginas do app
+   - Importado no layout.tsx raiz
+   ============================================ */
+
+/* ========================================
+   📦 TAILWIND BASE
+   ========================================
+   🎯 O QUE: Importa camadas do Tailwind
+   📚 COMO: @tailwind directive
+   🤔 POR QUÊ: Ativar Tailwind CSS
+   ⏰ QUANDO: Compilação do CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ========================================
+   🎨 VARIÁVEIS CSS (Tema Claro)
+   ========================================
+   🎯 O QUE: Define cores do tema
+   📚 COMO: CSS Custom Properties
+   🤔 POR QUÊ: Fácil alternar tema claro/escuro
+   ⏰ QUANDO: Usado em todo o app */
+:root {
+  /* 🎨 Cores de fundo */
+  --background: 0 0% 100%;           /* Branco */
+  --foreground: 222.2 84% 4.9%;      /* Preto azulado */
+
+  /* 📦 Cores de card/container */
+  --card: 0 0% 100%;                 /* Branco */
+  --card-foreground: 222.2 84% 4.9%; /* Preto azulado */
+
+  /* 🔘 Cores de botão primário */
+  --primary: 221.2 83.2% 53.3%;      /* Azul */
+  --primary-foreground: 210 40% 98%; /* Branco azulado */
+
+  /* 🔲 Cores de botão secundário */
+  --secondary: 210 40% 96.1%;        /* Cinza claro */
+  --secondary-foreground: 222.2 47.4% 11.2%; /* Preto */
+
+  /* 🔳 Cores de borda */
+  --border: 214.3 31.8% 91.4%;       /* Cinza claro */
+  --input: 214.3 31.8% 91.4%;        /* Cinza claro */
+
+  /* 🎯 Cores de destaque */
+  --accent: 210 40% 96.1%;           /* Cinza claro */
+  --accent-foreground: 222.2 47.4% 11.2%; /* Preto */
+
+  /* ⚠️ Cores de estado */
+  --destructive: 0 84.2% 60.2%;      /* Vermelho */
+  --destructive-foreground: 210 40% 98%; /* Branco */
+
+  /* 🔔 Cores de notificação */
+  --success: 142.1 76.2% 36.3%;      /* Verde */
+  --warning: 38 92% 50%;             /* Amarelo */
+  --error: 0 84.2% 60.2%;            /* Vermelho */
+
+  /* 📏 Outros */
+  --radius: 0.5rem;                  /* Border radius padrão */
+}
+
+/* ========================================
+   🌙 TEMA ESCURO (Dark Mode)
+   ========================================
+   🎯 O QUE: Cores para modo escuro
+   📚 COMO: Sobrescreve variáveis
+   🤔 POR QUÊ: Suporte a dark mode
+   ⏰ QUANDO: Usuário ativa dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+  }
+}
+
+/* ========================================
+   🎯 ESTILOS BASE
+   ========================================
+   🎯 O QUE: Reset e estilos padrão
+   📚 COMO: Sobrescreve estilos do browser
+   🤔 POR QUÊ: Consistência entre browsers
+   ⏰ QUANDO: Aplicado globalmente */
+
+/* 📄 Body */
+body {
+  /* 🎨 Cores de fundo e texto */
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  
+  /* 🔤 Fonte e renderização */
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* 📏 Margens */
+  margin: 0;
+  padding: 0;
+}
+
+/* 🔗 Links */
+a {
+  color: hsl(var(--primary));
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: hsl(var(--primary) / 0.8);
+}
+
+/* 📝 Inputs e Selects */
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* 🎯 Foco (acessibilidade) */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+/* ========================================
+   🎨 UTILITÁRIOS CUSTOMIZADOS
+   ========================================
+   🎯 O QUE: Classes CSS reutilizáveis
+   📚 COMO: @layer utilities
+   🤔 POR QUÊ: Estilos específicos do app
+   ⏰ QUANDO: Usado em componentes */
+
+@layer utilities {
+  /* 📜 Scrollbar customizada */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
+
+  /* 🎭 Animações */
+  .animate-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .animate-out {
+    animation: fadeOut 0.3s ease-in-out;
+  }
+
+  /* 📊 Gradientes */
+  .gradient-primary {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary)),
+      hsl(var(--primary) / 0.8)
+    );
+  }
+}
+
+/* ========================================
+   🗺️ LEAFLET (Mapas)
+   ========================================
+   🎯 O QUE: Estilos para mapas Leaflet
+   📚 COMO: Sobrescreve estilos padrão
+   🤔 POR QUÊ: Integrar com tema do app
+   ⏰ QUANDO: Ao usar mapas */
+
+.leaflet-container {
+  font-family: inherit;
+  border-radius: var(--radius);
+}
+
+/* ========================================
+   📱 RESPONSIVIDADE
+   ========================================
+   🎯 O QUE: Ajustes para mobile
+   📚 COMO: Media queries
+   🤔 POR QUÊ: UX em diferentes telas
+   ⏰ QUANDO: Em telas pequenas */
+
+@media (max-width: 640px) {
+  body {
+    font-size: 14px;
+  }
+}

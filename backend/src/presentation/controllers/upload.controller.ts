@@ -48,7 +48,7 @@ import { CloudinaryService } from '../../infrastructure/upload/cloudinary.servic
 @UseGuards(JwtAuthGuard) // 👮 O QUE: Aplica proteção JWT em TODAS as rotas deste controller
 @Controller('upload') // 🌐 O QUE: Define prefixo de rota "/upload"
 export class UploadController {
-  
+
   /**
    * 🏗️ CONSTRUTOR
    * 
@@ -59,7 +59,7 @@ export class UploadController {
    */
   constructor(
     private cloudinaryService: CloudinaryService // ☁️ Serviço injetado automaticamente
-  ) {}
+  ) { }
 
   /**
    * 📸 MÉTODO: uploadImage
@@ -96,7 +96,7 @@ export class UploadController {
     // 🤔 POR QUÊ: Pra guardar a imagem na nuvem e obter URL pública
     // ⏰ QUANDO: Imediatamente após receber o arquivo
     const url = await this.cloudinaryService.uploadImage(file);
-    
+
     // 📤 PASSO 2: Retorna a URL pro frontend
     // 🎯 O QUE: Retorna objeto com a URL da imagem
     // 📚 COMO: Formato JSON { url: "..." }

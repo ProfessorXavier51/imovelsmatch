@@ -98,8 +98,6 @@ import { ClienteFilters } from '../../domain/repositories/cliente.repository.int
  * - @Query() = Pega query string (?page=1&cidade=SP)
  */
 @ApiTags('clientes')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
 @Controller('clientes')
 export class ClienteController {
   // ========================================
@@ -189,7 +187,7 @@ export class ClienteController {
    */
   @Post()
   @HttpCode(HttpStatus.CREATED) // HTTP 201
-  @ApiOperation({ summary: 'Criar novo cliente', description: 'Cadastra um novo cliente interessado em imóveis' })
+  @ApiOperation({ summary: 'Cadastrar interesse (Público)', description: 'Cadastra um novo cliente interessado em imóveis (rota pública)' })
   @ApiResponse({ status: 201, description: 'Cliente criado com sucesso', type: ClienteResponseDTO })
   @ApiResponse({ status: 400, description: 'Dados inválidos' })
   @ApiResponse({ status: 409, description: 'Email já cadastrado' })
@@ -243,6 +241,8 @@ export class ClienteController {
    * @returns ClienteResponseDTO com dados do cliente
    */
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Buscar cliente por ID', description: 'Retorna os dados de um cliente específico' })
   @ApiParam({ name: 'id', description: 'ID do cliente (UUID)', example: '550e8400-e29b-41d4-a716-446655440000' })
   @ApiResponse({ status: 200, description: 'Cliente encontrado', type: ClienteResponseDTO })
@@ -321,6 +321,8 @@ export class ClienteController {
    * @returns Resultado paginado com clientes
    */
   @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Listar clientes', description: 'Lista clientes com filtros, paginação e ordenação' })
   @ApiQuery({ name: 'page', required: false, description: 'Número da página', example: 1 })
   @ApiQuery({ name: 'pageSize', required: false, description: 'Itens por página', example: 10 })
@@ -438,6 +440,8 @@ export class ClienteController {
    * @returns ClienteResponseDTO com cliente atualizado
    */
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Atualizar cliente', description: 'Atualiza dados de um cliente existente' })
   @ApiParam({ name: 'id', description: 'ID do cliente (UUID)' })
   @ApiResponse({ status: 200, description: 'Cliente atualizado com sucesso', type: ClienteResponseDTO })
@@ -499,6 +503,8 @@ export class ClienteController {
    * @returns void (HTTP 204 No Content)
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @HttpCode(HttpStatus.NO_CONTENT) // HTTP 204
   @ApiOperation({ summary: 'Deletar cliente', description: 'Remove um cliente permanentemente do sistema' })
   @ApiParam({ name: 'id', description: 'ID do cliente (UUID)' })

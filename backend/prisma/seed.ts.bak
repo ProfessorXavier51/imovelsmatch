@@ -1,0 +1,532 @@
+// ============================================
+// 📦 SEEDER: prisma/seed.ts
+// ============================================
+// 🎯 O QUE? Popula banco com dados de teste para CRM
+// 📊 QUANTIDADE: 10 clientes + 10 imóveis + 4 matches perfeitos
+// 🚀 COMO? npx prisma db seed
+// ============================================
+
+import { PrismaClient, TipoInteresse, TipoOperacao, TipoImovel } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('🌱 Iniciando seeder do CRM Imobiliário...\n');
+
+  // ========================================
+  // 1️⃣ CRIAR USUÁRIO ADMIN
+  // ========================================
+  console.log('👤 Criando usuário admin...');
+  const senhaHash = await bcrypt.hash('admin123', 10);
+  
+  const admin = await prisma.user.upsert({
+    where: { email: 'admin@imoveis.com' },
+    update: {},
+    create: {
+      email: 'admin@imoveis.com',
+      senha: senhaHash,
+      nome: 'Administrador Master',
+      role: 'ADMIN',
+      ativo: true,
+    },
+  });
+  console.log('✅ Admin criado:', admin.email);
+
+  // ========================================
+  // 2️⃣ CRIAR 10 CLIENTES (LEADS)
+  // ========================================
+  console.log('\n👥 Criando 10 clientes...');
+  
+  const clientesData = [
+    {
+      // 🎯 MATCH 1: Cliente quer comprar em SP até 500k
+      nome: 'João Silva',
+      email: 'joao.silva@email.com',
+      telefone: '(11) 98765-4321',
+      tipoInteresse: TipoInteresse.COMPRAR,
+      valorMinimo: 300000,
+      valorMaximo: 500000,
+      cidade: 'São Paulo',
+      bairrosPreferidos: 'Vila Mariana,Paraíso,Jardins',
+      tiposImovel: 'apartamento,casa',
+      observacoes: 'Procura apartamento de 2 quartos próximo ao metrô',
+    },
+    {
+      // 🎯 MATCH 2: Cliente quer alugar no Rio até 3k
+      nome: 'Maria Santos',
+      email: 'maria.santos@email.com',
+      telefone: '(21) 99876-5432',
+      tipoInteresse: TipoInteresse.ALUGAR,
+      valorMinimo: 2000,
+      valorMaximo: 3000,
+      cidade: 'Rio de Janeiro',
+      bairrosPreferidos: 'Copacabana,Ipanema,Leblon',
+      tiposImovel: 'apartamento',
+      observacoes: 'Quero vista para o mar, aceita animais de estimação',
+    },
+    {
+      // 🎯 MATCH 3: Cliente quer comprar em BH até 600k
+      nome: 'Carlos Oliveira',
+      email: 'carlos.oliveira@email.com',
+      telefone: '(31) 98765-1234',
+      tipoInteresse: TipoInteresse.COMPRAR,
+      valorMinimo: 400000,
+      valorMaximo: 600000,
+      cidade: 'Belo Horizonte',
+      bairrosPreferidos: 'Savassi,Lourdes,Funcionários',
+      tiposImovel: 'casa,sobrado',
+      observacoes: 'Precisa de quintal para crianças e pets',
+    },
+    {
+      // 🎯 MATCH 4: Cliente quer alugar em Curitiba até 2k
+      nome: 'Ana Pereira',
+      email: 'ana.pereira@email.com',
+      telefone: '(41) 99876-4321',
+      tipoInteresse: TipoInteresse.ALUGAR,
+      valorMinimo: 1500,
+      valorMaximo: 2000,
+      cidade: 'Curitiba',
+      bairrosPreferidos: 'Batel,Bigorrilho,Água Verde',
+      tiposImovel: 'apartamento,kitnet',
+      observacoes: 'Estudante de medicina, precisa de local tranquilo',
+    },
+    // Clientes sem match (para testar filtragem)
+    {
+      nome: 'Pedro Costa',
+      email: 'pedro.costa@email.com',
+      telefone: '(11) 91234-5678',
+      tipoInteresse: TipoInteresse.COMPRAR,
+      valorMinimo: 1000000,
+      valorMaximo: 2000000,
+      cidade: 'São Paulo',
+      bairrosPreferidos: 'Jardins,Moema,Brooklin',
+      tiposImovel: 'casa,sobrado',
+      observacoes: 'Procura casa de luxo com piscina',
+    },
+    {
+      nome: 'Fernanda Lima',
+      email: 'fernanda.lima@email.com',
+      telefone: '(21) 92345-6789',
+      tipoInteresse: TipoInteresse.ALUGAR,
+      valorMinimo: 5000,
+      valorMaximo: 8000,
+      cidade: 'Rio de Janeiro',
+      bairrosPreferidos: 'Barra da Tijuca,Recreio',
+      tiposImovel: 'casa,condominio',
+      observacoes: 'Família grande, precisa de 4 quartos',
+    },
+    {
+      nome: 'Roberto Almeida',
+      email: 'roberto.almeida@email.com',
+      telefone: '(31) 93456-7890',
+      tipoInteresse: TipoInteresse.COMPRAR,
+      valorMinimo: 250000,
+      valorMaximo: 350000,
+      cidade: 'Belo Horizonte',
+      bairrosPreferidos: 'Barreiro,Venda Nova',
+      tiposImovel: 'apartamento',
+      observacoes: 'Aposentado, busca apartamento térreo',
+    },
+    {
+      nome: 'Juliana Martins',
+      email: 'juliana.martins@email.com',
+      telefone: '(41) 94567-8901',
+      tipoInteresse: TipoInteresse.ALUGAR,
+      valorMinimo: 800,
+      valorMaximo: 1200,
+      cidade: 'Curitiba',
+      bairrosPreferidos: 'Centro,Cristo Rei',
+      tiposImovel: 'kitnet,quarto',
+      observacoes: 'Estagiária, orçamento limitado',
+    },
+    {
+      nome: 'Marcos Rodrigues',
+      email: 'marcos.rodrigues@email.com',
+      telefone: '(51) 95678-9012',
+      tipoInteresse: TipoInteresse.COMPRAR,
+      valorMinimo: 450000,
+      valorMaximo: 700000,
+      cidade: 'Porto Alegre',
+      bairrosPreferidos: 'Moinhos de Vento,Bela Vista',
+      tiposImovel: 'apartamento,cobertura',
+      observacoes: 'Executivo, quer cobertura próximo ao trabalho',
+    },
+    {
+      nome: 'Luciana Ferreira',
+      email: 'luciana.ferreira@email.com',
+      telefone: '(85) 96789-0123',
+      tipoInteresse: TipoInteresse.ALUGAR,
+      valorMinimo: 2500,
+      valorMaximo: 3500,
+      cidade: 'Fortaleza',
+      bairrosPreferidos: 'Meireles,Aldeota',
+      tiposImovel: 'apartamento,flat',
+      observacoes: 'Professora universitária, quer perto da praia',
+    },
+  ];
+
+  const clientes = [];
+  for (const data of clientesData) {
+    const cliente = await prisma.cliente.upsert({
+      where: { email: data.email },
+      update: {},
+      create: data,
+    });
+    clientes.push(cliente);
+    console.log(`✅ Cliente: ${cliente.nome} (${cliente.cidade})`);
+  }
+
+  // ========================================
+  // 3️⃣ CRIAR 10 IMÓVEIS
+  // ========================================
+  console.log('\n🏠 Criando 10 imóveis...');
+  
+  const imoveisData = [
+    {
+      // 🎯 MATCH 1: Apartamento em SP por 480k (João Silva)
+      titulo: 'Apartamento Moderno Vila Mariana',
+      slug: 'apartamento-moderno-vila-mariana',
+      descricao: 'Apartamento de 2 quartos, 1 suíte, varanda gourmet, próximo ao metrô Vila Mariana',
+      operacao: TipoOperacao.VENDA,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 480000,
+      cidade: 'São Paulo',
+      estado: 'SP',
+      bairro: 'Vila Mariana',
+      endereco: 'Rua dos Estudantes, 123 - Apto 45',
+      cep: '04120-000',
+      fotos: ['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800'],
+      quartos: 2,
+      vagas: 1,
+      areaM2: 75,
+      destaque: true,
+      publicado: true,
+    },
+    {
+      // 🎯 MATCH 2: Apartamento no Rio por 2.8k (Maria Santos)
+      titulo: 'Apartamento Vista Mar Copacabana',
+      slug: 'apartamento-vista-mar-copacabana',
+      descricao: 'Lindo apartamento com vista para o mar, 1 quarto, cozinha americana, reformado',
+      operacao: TipoOperacao.ALUGUEL,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 2800,
+      valorCondominio: 600,
+      valorIptu: null,
+      cidade: 'Rio de Janeiro',
+      estado: 'RJ',
+      bairro: 'Copacabana',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800']),
+      endereco: 'Avenida Atlântica',
+      numero: '456',
+      complemento: 'Apto 203',
+      cep: '22010-000',
+      quartos: 1,
+      suites: 0,
+      banheiros: 1,
+      vagasGaragem: 0,
+      areaUtil: 45,
+      areaTerreno: null,
+      aceitaFinanciamento: false,
+      aceitaPermuta: false,
+      mobiliado: true,
+      destaque: true,
+      observacoes: 'Aceita animais de pequeno porte',
+    },
+    {
+      // 🎯 MATCH 3: Casa em BH por 550k (Carlos Oliveira)
+      titulo: 'Casa com Quintal Savassi',
+      slug: 'casa-quintal-savassi',
+      descricao: 'Casa térrea com 3 quartos, quintal amplo, churrasqueira, 2 vagas de garagem',
+      operacao: TipoOperacao.VENDA,
+      tipoImovel: TipoImovel.CASA,
+      valor: 550000,
+      valorCondominio: null,
+      valorIptu: 1800,
+      cidade: 'Belo Horizonte',
+      estado: 'MG',
+      bairro: 'Savassi',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800']),
+      endereco: 'Rua da Bahia',
+      numero: '789',
+      complemento: null,
+      cep: '30140-010',
+      quartos: 3,
+      suites: 1,
+      banheiros: 3,
+      vagasGaragem: 2,
+      areaUtil: 150,
+      areaTerreno: 250,
+      aceitaFinanciamento: true,
+      aceitaPermuta: true,
+      mobiliado: false,
+      destaque: true,
+      observacoes: 'Excelente para família com crianças e pets',
+    },
+    {
+      // 🎯 MATCH 4: Apartamento em Curitiba por 1.8k (Ana Pereira)
+      titulo: 'Apartamento Estudante Água Verde',
+      slug: 'apartamento-estudante-agua-verde',
+      descricao: 'Studio compacto, próximo à UTFPR e shopping, internet inclusa',
+      operacao: TipoOperacao.ALUGUEL,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 1800,
+      valorCondominio: 400,
+      valorIptu: null,
+      cidade: 'Curitiba',
+      estado: 'PR',
+      bairro: 'Água Verde',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800']),
+      endereco: 'Rua República Argentina',
+      numero: '321',
+      complemento: 'Apto 501',
+      cep: '80610-260',
+      quartos: 1,
+      suites: 0,
+      banheiros: 1,
+      vagasGaragem: 1,
+      areaUtil: 35,
+      areaTerreno: null,
+      aceitaFinanciamento: false,
+      aceitaPermuta: false,
+      mobiliado: true,
+      destaque: false,
+      observacoes: 'Ideal para estudantes, próximo a universidades',
+    },
+    // Imóveis sem match (para testar)
+    {
+      titulo: 'Mansão Jardins',
+      slug: 'mansao-jardins',
+      descricao: 'Casa de luxo com 5 suítes, piscina, academia, cinema particular',
+      operacao: TipoOperacao.VENDA,
+      tipoImovel: TipoImovel.CASA,
+      valor: 5000000,
+      valorCondominio: null,
+      valorIptu: 15000,
+      cidade: 'São Paulo',
+      estado: 'SP',
+      bairro: 'Jardins',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800']),
+      endereco: 'Rua Oscar Freire',
+      numero: '1000',
+      complemento: null,
+      cep: '01426-001',
+      quartos: 5,
+      suites: 5,
+      banheiros: 8,
+      vagasGaragem: 6,
+      areaUtil: 800,
+      areaTerreno: 1200,
+      aceitaFinanciamento: false,
+      aceitaPermuta: true,
+      mobiliado: true,
+      destaque: true,
+      observacoes: 'Residência de alto padrão',
+    },
+    {
+      titulo: 'Casa Família Barra da Tijuca',
+      slug: 'casa-familia-barra-da-tijuca',
+      descricao: 'Casa em condomínio fechado, 4 quartos, piscina, área de lazer',
+      operacao: TipoOperacao.ALUGUEL,
+      tipoImovel: TipoImovel.CASA,
+      valor: 7500,
+      valorCondominio: 1200,
+      valorIptu: null,
+      cidade: 'Rio de Janeiro',
+      estado: 'RJ',
+      bairro: 'Barra da Tijuca',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=800']),
+      endereco: 'Avenida das Américas',
+      numero: '5000',
+      complemento: 'Casa 12',
+      cep: '22640-102',
+      quartos: 4,
+      suites: 2,
+      banheiros: 5,
+      vagasGaragem: 4,
+      areaUtil: 350,
+      areaTerreno: 450,
+      aceitaFinanciamento: false,
+      aceitaPermuta: false,
+      mobiliado: false,
+      destaque: false,
+      observacoes: 'Condomínio com segurança 24h',
+    },
+    {
+      titulo: 'Apto Econômico Barreiro',
+      slug: 'apto-economico-barreiro',
+      descricao: 'Apartamento simples, 2 quartos, próximo ao comércio local',
+      operacao: TipoOperacao.VENDA,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 280000,
+      valorCondominio: 350,
+      valorIptu: 600,
+      cidade: 'Belo Horizonte',
+      estado: 'MG',
+      bairro: 'Barreiro',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800']),
+      endereco: 'Rua dos Aposentados',
+      numero: '50',
+      complemento: 'Bloco A, Apto 101',
+      cep: '30640-010',
+      quartos: 2,
+      suites: 0,
+      banheiros: 1,
+      vagasGaragem: 1,
+      areaUtil: 55,
+      areaTerreno: null,
+      aceitaFinanciamento: true,
+      aceitaPermuta: false,
+      mobiliado: false,
+      destaque: false,
+      observacoes: 'Térreo, fácil acesso',
+    },
+    {
+      titulo: 'Kitnet Centro Curitiba',
+      slug: 'kitnet-centro-curitiba',
+      descricao: 'Kitnet básico, próximo à universidade federal',
+      operacao: TipoOperacao.ALUGUEL,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 900,
+      valorCondominio: 200,
+      valorIptu: null,
+      cidade: 'Curitiba',
+      estado: 'PR',
+      bairro: 'Centro',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800']),
+      endereco: 'Rua XV de Novembro',
+      numero: '100',
+      complemento: 'Apto 302',
+      cep: '80020-310',
+      quartos: 1,
+      suites: 0,
+      banheiros: 1,
+      vagasGaragem: 0,
+      areaUtil: 25,
+      areaTerreno: null,
+      aceitaFinanciamento: false,
+      aceitaPermuta: false,
+      mobiliado: true,
+      destaque: false,
+      observacoes: 'Ótima localização para estudantes',
+    },
+    {
+      titulo: 'Cobertura Luxo Moinhos',
+      slug: 'cobertura-luxo-moinhos',
+      descricao: 'Cobertura duplex, 3 suítes, terraço com vista panorâmica',
+      operacao: TipoOperacao.VENDA,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 650000,
+      valorCondominio: 1500,
+      valorIptu: 2500,
+      cidade: 'Porto Alegre',
+      estado: 'RS',
+      bairro: 'Moinhos de Vento',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1613977257363-707ba9348227?w=800']),
+      endereco: 'Rua Padre Chagas',
+      numero: '200',
+      complemento: 'Cobertura',
+      cep: '90570-080',
+      quartos: 3,
+      suites: 3,
+      banheiros: 4,
+      vagasGaragem: 3,
+      areaUtil: 280,
+      areaTerreno: null,
+      aceitaFinanciamento: true,
+      aceitaPermuta: false,
+      mobiliado: false,
+      destaque: true,
+      observacoes: 'Vista incrível do Parque Moinhos',
+    },
+    {
+      titulo: 'Flat Beira Mar Meireles',
+      slug: 'flat-beira-mar-meireles',
+      descricao: 'Flat mobiliado, serviços de hotelaria, vista para o mar',
+      operacao: TipoOperacao.ALUGUEL,
+      tipoImovel: TipoImovel.APARTAMENTO,
+      valor: 3200,
+      valorCondominio: 800,
+      valorIptu: null,
+      cidade: 'Fortaleza',
+      estado: 'CE',
+      bairro: 'Meireles',
+      fotos: JSON.stringify(['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800']),
+      endereco: 'Avenida Beira Mar',
+      numero: '3000',
+      complemento: 'Apto 1201',
+      cep: '60165-120',
+      quartos: 1,
+      suites: 1,
+      banheiros: 1,
+      vagasGaragem: 1,
+      areaUtil: 50,
+      areaTerreno: null,
+      aceitaFinanciamento: false,
+      aceitaPermuta: false,
+      mobiliado: true,
+      destaque: true,
+      observacoes: 'Serviços de hotel inclusos',
+    },
+  ];
+
+  const imoveis = [];
+  for (const data of imoveisData) {
+    const imovel = await prisma.imovel.create({ data });
+    imoveis.push(imovel);
+    console.log(`✅ Imóvel: ${imovel.titulo} (${imovel.cidade}) - ${imovel.operacao}`);
+  }
+
+  // ========================================
+  // 4️⃣ CRIAR MATCHES NO SISTEMA CRM (NEGOTIATIONS)
+  // ========================================
+  console.log('\n🔗 Registrando 4 matches no CRM (Negociações)...');
+  
+  const matchesData = [
+    { cliente: clientes[0], imovel: imoveis[0], etapa: 'PRIMEIRO_CONTATO', observacoes: 'Cliente interessado, aguardando visita' },
+    { cliente: clientes[1], imovel: imoveis[1], etapa: 'VISITA_AGENDADA', observacoes: 'Visita marcada para próxima semana' },
+    { cliente: clientes[2], imovel: imoveis[2], etapa: 'PROPOSTA_ENVIADA', observacoes: 'Proposta de 520k enviada, aguardando resposta' },
+    { cliente: clientes[3], imovel: imoveis[3], etapa: 'NEGOCIACAO', observacoes: 'Negociando valor do aluguel' },
+  ];
+
+  for (const match of matchesData) {
+    // Criar negociação no CRM
+    await prisma.negociacao.create({
+      data: {
+        clienteId: match.cliente.id,
+        imovelId: match.imovel.id,
+        responsavelId: admin.id,
+        etapa: match.etapa as any,
+        observacoes: `🎯 MATCH: ${match.observacoes}`,
+        valorProposta: match.imovel.operacao === 'VENDA' ? match.imovel.valor : null,
+      },
+    });
+    console.log(`✅ Negociação criada: ${match.cliente.nome} ↔ ${match.imovel.titulo} (${match.etapa})`);
+  }
+
+  // ========================================
+  // 📊 RESUMO
+  // ========================================
+  console.log('\n' + '='.repeat(50));
+  console.log('🎉 SEED CONCLUÍDO COM SUCESSO!');
+  console.log('='.repeat(50));
+  console.log(`👤 Usuários: 1 (admin@imoveis.com / admin123)`);
+  console.log(`👥 Clientes: ${clientes.length}`);
+  console.log(`🏠 Imóveis: ${imoveis.length}`);
+  console.log(`🔗 Matches: ${matchesData.length} no CRM`);
+  console.log('='.repeat(50));
+  console.log('\n🚀 PRÓXIMOS PASSOS:');
+  console.log('   1. Acesse: http://localhost:3000/admin/login');
+  console.log('   2. Login: admin@imoveis.com / admin123');
+  console.log('   3. Explore o CRM com dados reais!');
+  console.log('='.repeat(50) + '\n');
+}
+
+main()
+  .catch((e) => {
+    console.error('❌ Erro no seeder:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

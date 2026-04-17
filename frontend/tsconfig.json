@@ -1,0 +1,151 @@
+// ============================================
+// ⚙️ CONFIG: tsconfig.json
+// ============================================
+//
+// 🎯 O QUE ESTE ARQUIVO FAZ?
+// Configura o TypeScript para o projeto Next.js.
+//
+// 📚 ANALOGIA: MANUAL DE REGRAS DO JOGO 📋
+// - Define como o TypeScript vai compilar
+// - Configura paths para imports limpos
+// - Ativa recursos modernos do JS/TS
+//
+// 🤔 POR QUÊ PRECISAMOS DISSO?
+// - TypeScript precisa saber como compilar
+// - Next.js tem configurações específicas
+// - Imports absolutos (@/components/...)
+//
+// ⏰ QUANDO É USADO?
+// - Ao rodar npm run dev
+// - Ao fazer build
+// - No editor (autocomplete, erros)
+// ============================================
+{
+  "compilerOptions": {
+    // ========================================
+    // 🎯 TARGET & MODULE
+    // ========================================
+    // 🎯 O QUE: Versão do JavaScript gerado
+    // 📚 COMO: ES2017 = suporta async/await
+    // 🤔 POR QUÊ: Compatibilidade com browsers modernos
+    "target": "ES2017",
+    // 🎯 O QUE: Sistema de módulos
+    // 📚 COMO: ESNext = import/export moderno
+    // 🤔 POR QUÊ: Padrão do Next.js
+    "module": "ESNext",
+    // 🎯 O QUE: Biblioteca padrão do TypeScript
+    // 📚 COMO: DOM + ES2017 = APIs do browser
+    // 🤔 POR QUÊ: Usar document, window, fetch...
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2017"
+    ],
+    // ========================================
+    // 🎯 MODULE RESOLUTION
+    // ========================================
+    // 🎯 O QUE: Como resolver imports
+    // 📚 COMO: Bundler = modo Next.js/Webpack
+    // 🤔 POR QUÊ: Compatível com Next.js 14
+    "moduleResolution": "bundler",
+    // 🎯 O QUE: Permite import de JSON
+    // 📚 COMO: import data from './data.json'
+    // 🤔 POR QUÊ: Útil para configs e mocks
+    "resolveJsonModule": true,
+    // 🎯 O QUE: Isola módulos
+    // 📚 COMO: Cada arquivo é um módulo separado
+    // 🤔 POR QUÊ: Evita conflitos de nomes
+    "isolatedModules": true,
+    // ========================================
+    // 🎯 JSX & REACT
+    // ========================================
+    // 🎯 O QUE: Como compilar JSX
+    // 📚 COMO: preserve = Next.js compila depois
+    // 🤔 POR QUÊ: Otimização do Next.js
+    "jsx": "react-jsx",
+    // 🎯 O QUE: Permite JS junto com TS
+    // 📚 COMO: .js e .ts no mesmo projeto
+    // 🤔 POR QUÊ: Migração gradual
+    "allowJs": true,
+    // ========================================
+    // 🎯 TYPE CHECKING
+    // ========================================
+    // 🎯 O QUE: Verificação de tipos estrita
+    // 📚 COMO: Ativa todas as verificações
+    // 🤔 POR QUÊ: Máxima segurança de tipos
+    "strict": true,
+    // 🎯 O QUE: Não permite any implícito
+    // 📚 COMO: Força tipar tudo
+    // 🤔 POR QUÊ: Evita erros silenciosos
+    "noImplicitAny": true,
+    // 🎯 O QUE: Verifica código não usado
+    // 📚 COMO: Avisa variáveis não usadas
+    // 🤔 POR QUÊ: Código limpo
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // ========================================
+    // 🎯 PATHS (Imports Absolutos)
+    // ========================================
+    // 🎯 O QUE: Caminho base para imports
+    // 📚 COMO: . = raiz do projeto
+    // 🤔 POR QUÊ: Imports absolutos
+    "baseUrl": ".",
+    // 🎯 O QUE: Atalhos para pastas
+    // 📚 COMO: @/* = qualquer arquivo na raiz
+    // 🤔 POR QUÊ: Import limpo: @/components/Button
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
+    // ========================================
+    // 🎯 NEXT.JS SPECIFIC
+    // ========================================
+    // 🎯 O QUE: Permite imports default
+    // 📚 COMO: import React from 'react'
+    // 🤔 POR QUÊ: Compatibilidade
+    "esModuleInterop": true,
+    // 🎯 O QUE: Não emite arquivos .js
+    // 📚 COMO: Next.js compila sozinho
+    // 🤔 POR QUÊ: Evita duplicação
+    "noEmit": true,
+    // 🎯 O QUE: Pula verificação de libs
+    // 📚 COMO: Mais rápido
+    // 🤔 POR QUÊ: Confiar em node_modules
+    "skipLibCheck": true,
+    // 🎯 O QUE: Incremental compilation
+    // 📚 COMO: Cache de compilação
+    // 🤔 POR QUÊ: Build mais rápido
+    "incremental": true,
+    // 🎯 O QUE: Plugins do Next.js
+    // 📚 COMO: Integração com App Router
+    // 🤔 POR QUÊ: Recursos do Next.js 14
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  // ========================================
+  // 📁 ARQUIVOS INCLUÍDOS
+  // ========================================
+  // 🎯 O QUE: Quais arquivos compilar
+  // 📚 COMO: Lista de patterns
+  // 🤔 POR QUÊ: Incluir todos os TS/TSX
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  // ========================================
+  // 📁 ARQUIVOS EXCLUÍDOS
+  // ========================================
+  // 🎯 O QUE: Quais arquivos ignorar
+  // 📚 COMO: Lista de pastas
+  // 🤔 POR QUÊ: Não compilar node_modules
+  "exclude": [
+    "node_modules"
+  ]
+}
