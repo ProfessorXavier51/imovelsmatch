@@ -1,0 +1,159 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/admin/atividades",
+      "regex": "^/admin/atividades(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/atividades(?:/)?$"
+    },
+    {
+      "page": "/admin/clientes",
+      "regex": "^/admin/clientes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/clientes(?:/)?$"
+    },
+    {
+      "page": "/admin/clientes/novo",
+      "regex": "^/admin/clientes/novo(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/clientes/novo(?:/)?$"
+    },
+    {
+      "page": "/admin/dashboard",
+      "regex": "^/admin/dashboard(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/dashboard(?:/)?$"
+    },
+    {
+      "page": "/admin/imoveis",
+      "regex": "^/admin/imoveis(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/imoveis(?:/)?$"
+    },
+    {
+      "page": "/admin/imoveis/novo",
+      "regex": "^/admin/imoveis/novo(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/imoveis/novo(?:/)?$"
+    },
+    {
+      "page": "/admin/login",
+      "regex": "^/admin/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/login(?:/)?$"
+    },
+    {
+      "page": "/admin/matches",
+      "regex": "^/admin/matches(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/matches(?:/)?$"
+    },
+    {
+      "page": "/admin/negociacoes",
+      "regex": "^/admin/negociacoes(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/negociacoes(?:/)?$"
+    },
+    {
+      "page": "/admin/register",
+      "regex": "^/admin/register(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/register(?:/)?$"
+    },
+    {
+      "page": "/admin/relatorios",
+      "regex": "^/admin/relatorios(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/relatorios(?:/)?$"
+    },
+    {
+      "page": "/cadastro-interesse",
+      "regex": "^/cadastro\\-interesse(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/cadastro\\-interesse(?:/)?$"
+    },
+    {
+      "page": "/clientes/novo",
+      "regex": "^/clientes/novo(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/clientes/novo(?:/)?$"
+    },
+    {
+      "page": "/dashboard-surpresa",
+      "regex": "^/dashboard\\-surpresa(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/dashboard\\-surpresa(?:/)?$"
+    },
+    {
+      "page": "/imoveis/novo",
+      "regex": "^/imoveis/novo(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/imoveis/novo(?:/)?$"
+    },
+    {
+      "page": "/login",
+      "regex": "^/login(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/login(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

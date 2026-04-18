@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/cadastro-interesse/layout,_N_T_/cadastro-interesse/page,_N_T_/cadastro-interesse"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/cadastro-interesse/__PAGE__",
+    "/cadastro-interesse",
+    "/_index",
+    "/_head"
+  ]
+}

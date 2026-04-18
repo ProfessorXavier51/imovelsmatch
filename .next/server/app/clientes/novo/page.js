@@ -1,0 +1,13 @@
+var R=require("../../../chunks/ssr/[turbopack]_runtime.js")("server/app/clientes/novo/page.js")
+R.c("server/chunks/ssr/[root-of-the-server]__12bu66n._.js")
+R.c("server/chunks/ssr/0r9g_next_dist_esm_build_templates_app-page_0qrwwib.js")
+R.c("server/chunks/ssr/[root-of-the-server]__073_zdz._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__0g1jh69._.js")
+R.c("server/chunks/ssr/[root-of-the-server]__0ljcj54._.js")
+R.c("server/chunks/ssr/0r9g_next_dist_client_components_02pzh0k._.js")
+R.c("server/chunks/ssr/0r9g_next_dist_client_components_builtin_forbidden_0hywuao.js")
+R.c("server/chunks/ssr/0r9g_next_dist_client_components_builtin_unauthorized_059~5ae.js")
+R.c("server/chunks/ssr/0r9g_next_dist_client_components_builtin_global-error_06bh~5g.js")
+R.c("server/chunks/ssr/frontend__next-internal_server_app_clientes_novo_page_actions_0x1.jxx.js")
+R.m(8728)
+module.exports=R.m(8728).exports

@@ -2,9 +2,9 @@
   "name": "imovelsmatch",
   "version": "1.0.0",
   "scripts": {
-    "build": "cd frontend && npm install --legacy-peer-deps && npm run build",
+    "build": "cd frontend && npm install --legacy-peer-deps && npm run build && cd .. && rm -rf .next && cp -r frontend/.next .next",
     "dev": "cd frontend && npm run dev",
-    "start": "cd frontend && node .next/standalone/server.js"
+    "start": "cd frontend && npm start"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

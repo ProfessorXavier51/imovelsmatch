@@ -1,0 +1,17 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/imoveis/layout,_N_T_/admin/imoveis/novo/layout,_N_T_/admin/imoveis/novo/page,_N_T_/admin/imoveis/novo"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/admin/imoveis/novo/__PAGE__",
+    "/admin/imoveis/novo",
+    "/admin/imoveis",
+    "/admin",
+    "/_index",
+    "/_head"
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/admin/atividades/page": "/admin/atividades",
+  "/admin/clientes/novo/page": "/admin/clientes/novo",
+  "/admin/clientes/page": "/admin/clientes",
+  "/admin/dashboard/page": "/admin/dashboard",
+  "/admin/imoveis/novo/page": "/admin/imoveis/novo",
+  "/admin/imoveis/page": "/admin/imoveis",
+  "/admin/login/page": "/admin/login",
+  "/admin/matches/page": "/admin/matches",
+  "/admin/negociacoes/page": "/admin/negociacoes",
+  "/admin/register/page": "/admin/register",
+  "/admin/relatorios/page": "/admin/relatorios",
+  "/cadastro-interesse/page": "/cadastro-interesse",
+  "/clientes/novo/page": "/clientes/novo",
+  "/dashboard-surpresa/page": "/dashboard-surpresa",
+  "/imoveis/novo/page": "/imoveis/novo",
+  "/login/page": "/login",
+  "/page": "/"
+}

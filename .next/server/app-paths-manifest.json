@@ -1,0 +1,21 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/admin/atividades/page": "app/admin/atividades/page.js",
+  "/admin/clientes/novo/page": "app/admin/clientes/novo/page.js",
+  "/admin/clientes/page": "app/admin/clientes/page.js",
+  "/admin/dashboard/page": "app/admin/dashboard/page.js",
+  "/admin/imoveis/novo/page": "app/admin/imoveis/novo/page.js",
+  "/admin/imoveis/page": "app/admin/imoveis/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/matches/page": "app/admin/matches/page.js",
+  "/admin/negociacoes/page": "app/admin/negociacoes/page.js",
+  "/admin/register/page": "app/admin/register/page.js",
+  "/admin/relatorios/page": "app/admin/relatorios/page.js",
+  "/cadastro-interesse/page": "app/cadastro-interesse/page.js",
+  "/clientes/novo/page": "app/clientes/novo/page.js",
+  "/dashboard-surpresa/page": "app/dashboard-surpresa/page.js",
+  "/imoveis/novo/page": "app/imoveis/novo/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js"
+}

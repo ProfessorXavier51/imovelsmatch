@@ -1,0 +1,3 @@
+module.exports=[13350,a=>{"use strict";var b=a.i(57850),c=a.i(45056),d=a.i(93609);a.s(["default",0,function(){let a=(0,d.useRouter)();return(0,c.useEffect)(()=>{a.push("/admin/login")},[a]),(0,b.jsx)("div",{className:"min-h-screen bg-[#0a0a0f] flex items-center justify-center",children:(0,b.jsxs)("div",{className:"text-center",children:[(0,b.jsx)("div",{className:"w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"}),(0,b.jsx)("p",{className:"text-slate-400 font-medium",children:"Redirecionando..."})]})})}])}];
+
+//# sourceMappingURL=frontend_app_login_page_tsx_089-6-o._.js.map
